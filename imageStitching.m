@@ -1,6 +1,6 @@
 function [ output_args ] = imageStitching(imgLoc)
     %Load Images
-    imgDir = 'C:\Users\Kurtis\Documents\School\CSC 492\Proj\Panorama-ImageStitching\images\Building';
+    imgDir = 'C:\Users\ZeLi\Desktop\CSC492\Panorama-ImageStitching\images\outside1';
     bDir =  fullfile(toolboxdir('vision'), 'visiondata', 'building');
     imgSet = imageSet(imgDir);
     montage(imgSet.ImageLocation);
