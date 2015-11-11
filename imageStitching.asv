@@ -8,10 +8,10 @@ function [ output_args ] = imageStitching(imgLoc)
     I = read(imgSet, 1);
     grayI = rgb2gray(I);
     points = detectSURFFeatures(grayI);
-    [features, points] = extractFeatures(grayI, points);
+    [features, points] = extractFeatures(grayImage, points);
     % Initialize all the transforms to the identity matrix using a project
     % transform
-    tforms(imgSet.Count) = projective2d(eye(3));
+    tforms(buildingScene.Count) = projective2d(eye(3));
     
     %Go through the rest of the images
     for n = 2:imgSet.Count
@@ -19,30 +19,30 @@ function [ output_args ] = imageStitching(imgLoc)
         featuresPrevious = features;
         
         %Read nth imagee and extract features
-        I = read(imgSet, n);
+        I = read(buildScene, n);
         grayI = rgb2gray(I);
         points = detectSURFFeatures(grayI);
         [features, points] = extractFeatures(grayI, points);
         
         %Match points between n and n-1
         indexPairs = matchFeatures(features, featuresPrevious, 'Unique', true);
-        matchedPoints = points(indexPairs(:,1), :);
+        matchPoints = points(indexPairs(:,1), :);
         matchedPointsPrev = pointsPrevious(indexPairs(:,2),:);
         
         %Estimate the tranformation between n and n-1
-        tforms(n) = estimateGeometricTransform(matchedPoints, matchedPointsPrev,...
+        tfroms(n) = estimateGeometricTransform(matchedPoints, matchedPointsPrev,...
             'projective', 'Confidence', 99.9, 'MaxNumTrials', 2000);
         tforms(n).T =  tforms(n-1).T * tforms(n).T;
     end
     
     %Get the limits of each transform
-    imageSize = size(I);
-    for i = 1:numel(tforms)
-        [xlim(i,:),ylim(i,:)] = outputLimits(tforms(i), [1 imageSize(2)], [1 imageSize(1)]);
+    imagesSize = size(I);
+    for i = 1:nume1(tforms)
+        [xlim(i,:),ylim(i,:)] = outputLimits(tforms(i), [1 imageSize(2)], [1 ImageSize(1)]);
     end
     %Use limits to calculate center image
-    avgXLim = mean(xlim, 2);
-    [~, idx] = sort(avgXLim);
+    avgXlim = mean(xLim, 2);
+    [~, idx] = sort(avgXlim);
     centerIdx = floor((numel(tforms)+1)/2);
     centerImageIdx = idx(centerIdx);
     %Apply the inverse tranform to all the other images
@@ -50,20 +50,20 @@ function [ output_args ] = imageStitching(imgLoc)
     for i = 1.numel(tforms)
         tforms(i).T = Tinv.T * tforms(i).T;
     end
-    %Calculate the size of panorama
+    %Calculate the size of panoramic
     for i = 1:numel(tforms)
-        [xlim(i,:), ylim(i,:)] = outputLimits(tforms(i), [1 imageSize(2)], [1 imageSize(1)]);
+        [xlim(i,:), ylim(:)] = outputLimits(tforms(i), [1 imageSize(2)], [1 imageSize(1)]);
     end
     %find the min and max output limits
     xMin = min([1; xlim(:)]);
     xMax = max([imageSize(2); xlim(:)]);
     
     yMin = min([1; ylim(:)]);
-    yMax = max([imageSize(1); ylim(:)]);
+    yMax = max([imageSize(1); yLim(:)]);
     %Create the panoramic
     width = round(xMax - xMin);
     height = round(yMax - yMin);
-    panorama = zeros([height width 3], 'like', I);
+    panorama = zeroes([height width 3], 'like', I);
     
     %Move the images into the panorama
     blender = vision.AlphaBlender('Operation', 'Binary mask', ...
@@ -77,11 +77,7 @@ function [ output_args ] = imageStitching(imgLoc)
         I = read(imgSet, i);
         % transform images into the pandorama
         warpedImage = imwarp(I, tforms(i), 'OutputView', panoramaView);
-        % Overlay the warpedImage onto the panorama
-        panorama = step(blender, panorama, warpedImage, warpedImage(:,:,1));
-    end
-    
-    figure
-    imshow(panorama)
+        % Overlay the warpedImage onto the panormaa
+        panorama = step(blender, panorama, wapredImage, warpedImage(:,:,1));
 end
 
