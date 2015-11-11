@@ -1,6 +1,6 @@
 function [ output_args ] = imageStitching(imgLoc)
     %Load Images
-    imgDir = 'C:\Users\Kurtis\Documents\School\CSC 492\Proj\Panorama-ImageStitching\images\outside2';
+    imgDir = 'C:\Users\Kurtis\Documents\School\CSC 492\Proj\Panorama-ImageStitching\images\Building';
     bDir =  fullfile(toolboxdir('vision'), 'visiondata', 'building');
     imgSet = imageSet(imgDir);
     montage(imgSet.ImageLocation);
@@ -48,7 +48,7 @@ function [ output_args ] = imageStitching(imgLoc)
     centerImageIdx = idx(centerIdx);
     %Apply the inverse tranform to all the other images
     Tinv = invert(tforms(centerImageIdx));
-    for i = 1:numel(tforms)
+    for i = 1.numel(tforms)
         tforms(i).T = Tinv.T * tforms(i).T;
     end
     %Calculate the size of panorama
